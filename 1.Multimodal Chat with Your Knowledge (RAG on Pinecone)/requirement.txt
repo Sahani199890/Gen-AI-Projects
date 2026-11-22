@@ -1,0 +1,7 @@
+pinecone
+groq
+python-dotenv
+pymupdf
+pdfplumber
+faster-whisper
+streamlit
