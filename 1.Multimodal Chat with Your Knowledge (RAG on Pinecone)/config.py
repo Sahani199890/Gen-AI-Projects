@@ -11,7 +11,7 @@ LLM_MODEL = os.getenv("LLM_MODEL", "llama-3.3-70b-versatile")
 VISION_MODEL = os.getenv("VISION_MODEL", "meta-llama/llama-4-scout-17b-16e-instruct")
 STT_MODEL = os.getenv("STT_MODEL", "whisper-large-v3-turbo")
 
-EMBED_MODEL = "multilingual-e5-large"
+EMBED_MODEL = os.getenv("EMBED_MODEL", "multilingual-e5-large")
 EMBED_DIM = 1024          # must equal the Pinecone index dimension
 DOCS_NAMESPACE = "docs"
 MEMORY_NAMESPACE = "memory"

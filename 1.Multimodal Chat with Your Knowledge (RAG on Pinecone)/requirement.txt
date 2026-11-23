@@ -4,6 +4,7 @@ python-dotenv
 pymupdf
 pdfplumber
 faster-whisper
+fastapi
 streamlit
 langchain
 langchain-community

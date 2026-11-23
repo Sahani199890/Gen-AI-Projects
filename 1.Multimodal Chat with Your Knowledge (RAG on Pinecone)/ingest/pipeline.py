@@ -1,43 +1,22 @@
 from pathlib import Path
-from langchain_community.document_loaders import UnstructuredFileLoader
-from typing import List,Dict,Any,Optional
-from langchain_text_splitters import RecursiveCharacterTextSplitter
+from typing import List, Dict, Any
+from ingest.document_loader import load_document_chunk
+from ingest.chunking import chunk_content_recursive_text_splitter
 
-
-def load_document_chunk(file_path:str)->List[Dict[str,Any]]:
-    
-    result=[]
+def chain_for_pdf_chunk(file_path: str | Path) -> List[Dict[str, Any]]:
     path=Path(file_path)
+    pages=load_document_chunk(file_path)
+    chunks= chunk_content_recursive_text_splitter(pages)
+    records = [
+        {
+            "text": chunk.page_content,
+            "metadata": {
+                **chunk.metadata,
+                "source_file": path.name,
+                "chunk_index": chunk.chunk_index,
+            }
+        }
+        for chunk in chunks
+    ]
 
-    if not path.exists():
-        raise FileNotFoundError(f"File not found at {file_path}")
-    else:
-        loader=UnstructuredFileLoader(str(file_path))
-        raw_documents = loader.load()
-
-        text_splitter=RecursiveCharacterTextSplitter(
-            chunk_size=500,
-            chunk_overlap=50,
-            separators=["\n\n","\n"," ",""]
-            )
-        chunks=text_splitter.split_documents(raw_documents)
-
-        for chunk_index,chunk in enumerate(chunks):
-            result.append({
-                "chunk_index":chunk_index,
-                "content":chunk.page_content,
-                "metadata":chunk.metadata
-            })
-
-        return result
-
-
-def generate_embeddings(texts:List[str])->List[List[float]]:
-    pass
-
-
-if __name__=="__main__":
-    PROJECT_ROOT = Path(__file__).resolve().parent.parent
-    file_path=PROJECT_ROOT / "data" / "Abhishek-Sahani-Resume.pdf"
-    print(load_document_chunk(file_path))
-        
+    return records
